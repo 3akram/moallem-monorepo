@@ -1,0 +1,30 @@
+{
+  "name": "@moallem/ui",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.73.2",
+    "react-native-svg": "14.1.0",
+    "@shopify/restyle": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/react": "~18.2.45",
+    "@types/react-native": "~0.73.0",
+    "typescript": "^5.3.3",
+    "jest": "^29.7.0",
+    "@testing-library/react-native": "^12.4.3",
+    "@moallem/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  }
+}

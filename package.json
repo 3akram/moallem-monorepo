@@ -1,0 +1,45 @@
+{
+  "name": "moallem",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Production-ready educational app monorepo",
+  "author": "Moallem Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "prepare": "husky install",
+    "docker:up": "docker-compose -f infrastructure/docker/docker-compose.yml up",
+    "docker:down": "docker-compose -f infrastructure/docker/docker-compose.yml down",
+    "setup": "pnpm install && pnpm run setup:env",
+    "setup:env": "node scripts/env-setup.js"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
+    "turbo": "^1.12.0",
+    "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
+  },
+  "packageManager": "pnpm@8.14.0"
+}
