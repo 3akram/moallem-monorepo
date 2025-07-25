@@ -1,8 +1,9 @@
-version: '3.8'
+version: '3.9'
 
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: moallem-postgres
     environment:
       POSTGRES_USER: moallem
       POSTGRES_PASSWORD: password
@@ -11,48 +12,47 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - moallem-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U moallem"]
+      test: ["CMD-SHELL", "pg_isready -U moallem -d moallem_dev"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes
+    container_name: moallem-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - moallem-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  localstack:
-    image: localstack/localstack:latest
+  api:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/api.Dockerfile
+    container_name: moallem-api
     environment:
-      - SERVICES=s3,ses,cloudfront
-      - DEBUG=0
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      NODE_ENV: development
+      DATABASE_URL: postgresql://moallem:password@postgres:5432/moallem_dev
+      REDIS_URL: redis://redis:6379
     ports:
-      - "4566:4566"
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
-      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    networks:
-      - moallem-network
+      - ../../apps/api:/app/apps/api
+      - ../../packages:/app/packages
+      - /app/node_modules
+      - /app/apps/api/node_modules
 
 volumes:
   postgres_data:
   redis_data:
-
-networks:
-  moallem-network:
-    driver: bridge
